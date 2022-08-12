@@ -46,6 +46,10 @@ impl ChipState {
         (n3, n2, n1, n0)
     }
 
+    fn nnn(instruction: u16) -> u16 {
+        instruction & 0x0FFF
+    }
+
     fn execute(&mut self, instruction: u16) -> Option<chip8_base::Display> {
         let nbs = Self::nibbles(instruction);
         match nbs {
@@ -55,7 +59,10 @@ impl ChipState {
             (0x0, 0x0, 0xE, 0x0) => {
                 self.display = [[0; 64]; 32];
                 return Some(self.display);
-            }
+            },
+            // 1nnn JP addr: Jump to location nnn
+            (0x1, _, _, _) => self.program_counter = Self::nnn(instruction),
+            
             _ => panic!("Instruction either doesn't exist or hasn't been implemented yet"),
         };
         None
