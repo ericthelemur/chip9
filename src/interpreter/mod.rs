@@ -26,12 +26,14 @@ impl ChipState {
     }
 
     fn fetch(&mut self) -> u16 {
-        // You could just return the two u8's as a tuple
+        dbg!(&self.program_counter);
         let instruction = u16::from_be_bytes([
             self.memory[self.program_counter as usize],
             self.memory[(self.program_counter + 1) as usize],
         ]);
         self.program_counter += 2;
+        self.program_counter &= 0x0fff;
+        dbg!(&instruction);
         instruction
     }
 }
