@@ -50,6 +50,10 @@ impl ChipState {
         instruction & 0x0FFF
     }
 
+    fn kk(instruction: u16) -> u8 {
+        (instruction & 0x00FF) as u8
+    }
+
     fn execute(&mut self, instruction: u16) -> Option<chip8_base::Display> {
         let nbs = Self::nibbles(instruction);
         match nbs {
@@ -62,6 +66,8 @@ impl ChipState {
             },
             // 1nnn JP addr: Jump to location nnn
             (0x1, _, _, _) => self.program_counter = Self::nnn(instruction),
+            // 6xkk LD Vx, byte: Set Vx = kk.
+            (0x6, x, _, _) => self.registers[x as usize] = Self::kk(instruction),
             
             _ => panic!("Instruction either doesn't exist or hasn't been implemented yet"),
         };
