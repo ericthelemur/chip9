@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 pub struct ChipState {
     memory: [u8; 4096],
     program_counter: u16,
@@ -23,14 +25,14 @@ impl ChipState {
 
 impl chip8_base::Interpreter for ChipState {
     fn step(&mut self, keys: &chip8_base::Keys) -> Option<chip8_base::Display> {
-        todo!()
+        return Some(self.display);
     }
 
     fn speed(&self) -> std::time::Duration {
-        todo!()
+        return Duration::new(1, 0);
     }
 
     fn buzzer_active(&self) -> bool {
-        todo!()
+        return false;
     }
 }
