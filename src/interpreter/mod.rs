@@ -9,7 +9,7 @@ pub struct ChipState {
 }
 
 impl ChipState {
-    pub fn new(freq: u32) -> Self {
+    pub fn new() -> Self {
         Self { 
             memory: [0; 4096],
             registers: [0; 16], 
@@ -18,5 +18,19 @@ impl ChipState {
             stack_pointer: 0,
             stack: [0; 16],
         }
+    }
+}
+
+impl chip8_base::Interpreter for ChipState {
+    fn step(&mut self, keys: &chip8_base::Keys) -> Option<chip8_base::Display> {
+        todo!()
+    }
+
+    fn speed(&self) -> std::time::Duration {
+        todo!()
+    }
+
+    fn buzzer_active(&self) -> bool {
+        todo!()
     }
 }
