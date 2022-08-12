@@ -3,7 +3,10 @@ use interpreter::ChipState;
 mod interpreter;
 
 fn main() {
-    let mut vm = ChipState::new(700);
-
-    chip8_base::run(vm);
+    let vm = ChipState::new(700);
+    if let Ok(vml) = vm.load("roms/uwcs.ch8") {
+        chip8_base::run(vml);
+    } else {
+        println!("ROM does not exist.")
+    }
 }
