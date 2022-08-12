@@ -24,10 +24,21 @@ impl ChipState {
             speed: Duration::from_secs_f64(1_f64 / freq as f64),
         }
     }
+
+    fn fetch(&mut self) -> u16 {
+        // You could just return the two u8's as a tuple
+        let instruction = u16::from_be_bytes([
+            self.memory[self.program_counter as usize],
+            self.memory[(self.program_counter + 1) as usize],
+        ]);
+        self.program_counter += 2;
+        instruction
+    }
 }
 
 impl chip8_base::Interpreter for ChipState {
     fn step(&mut self, keys: &chip8_base::Keys) -> Option<chip8_base::Display> {
+        let instr = self.fetch();
         return Some(self.display);
     }
 
