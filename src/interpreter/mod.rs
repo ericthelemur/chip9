@@ -72,6 +72,37 @@ impl ChipState {
             }
             // Annn LD I, addr: Set I = nnn.
             (0xA,_,_,_) => self.index = Self::nnn(instruction),
+            // Dxyn DRW Vx, Vy, nibble: Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
+            (0xD, x, y, n) => {
+                let tlx = self.registers[x as usize] % 64;
+                let tly = self.registers[y as usize] % 32;
+                self.registers[0xF] = 0;
+                let ind = self.index as usize;
+                let sprite = &self.memory[ind..(ind + n as usize)];
+
+                for (i, row) in sprite.iter().enumerate() {
+                    let pxy = tly + i as u8;
+                    if pxy > 31 {
+                        break;
+                    }
+                    
+                    for j in 0..8 {
+                        let pxx = tlx + j;
+                        if pxx > 63 {
+                            break;
+                        }
+                        let old_px = &mut self.display[pxy as usize][pxx as usize];
+                        let mask = 2_u8.pow(7 - j as u32);
+                        let new_u8 = (row & mask) >> (7 - j);
+                        let new_px: chip8_base::Pixel = new_u8.try_into().unwrap();
+                        if (new_px & *old_px).into() { // if collision
+                            self.registers[0xF] = 1 
+                        }
+                        *old_px ^= new_px;
+                    }
+                }
+                return Some(self.display)
+            },
             _ => panic!("Instruction either doesn't exist or hasn't been implemented yet"),
         };
         None
