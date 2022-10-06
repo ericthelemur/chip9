@@ -29,6 +29,7 @@ impl ChipState {
             self.memory[self.program_counter as usize],
             self.memory[(self.program_counter + 1) as usize],
         ]);
+        log::info!("Instruction {} found at  PC {}", instruction, self.program_counter);
         self.program_counter += 2;
         instruction
     }
