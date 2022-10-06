@@ -26,6 +26,12 @@ impl ChipState {
         }
     }
 
+    pub fn load(mut self, filename: &str) -> std::io::Result<Self> {
+        let program = std::fs::read(filename)?;
+        self.memory[0x200..(0x200 + program.len())].copy_from_slice(&program);
+        Ok(self)
+    }
+
     fn fetch(&mut self) -> u16 {
         let instruction = u16::from_be_bytes([
             self.memory[self.program_counter as usize],
