@@ -20,3 +20,17 @@ impl ChipState {
         }
     }
 }
+
+impl chip8_base::Interpreter for ChipState {
+    fn step(&mut self, keys: &chip8_base::Keys) -> Option<chip8_base::Display> {
+        todo!()
+    }
+
+    fn speed(&self) -> std::time::Duration {
+        todo!()
+    }
+
+    fn buzzer_active(&self) -> bool {
+        todo!()
+    }
+}
