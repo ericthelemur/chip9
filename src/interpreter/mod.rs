@@ -8,6 +8,7 @@ pub struct ChipState {
     stack_pointer: u8,
     stack: [u16; 16],
     speed: Duration,
+    index: u16,
     // ... there will be more
 }
 
@@ -21,6 +22,7 @@ impl ChipState {
             stack_pointer: 0,
             stack: [0; 16],
             speed: Duration::from_secs_f64(1_f64 / clock_freq as f64),
+            index: 0,
         }
     }
 
@@ -68,6 +70,8 @@ impl ChipState {
             (0x7, x, _, _) => {
                 self.registers[x as usize] = self.registers[x as usize].wrapping_add(Self::kk(instruction));
             }
+            // Annn LD I, addr: Set I = nnn.
+            (0xA,_,_,_) => self.index = Self::nnn(instruction),
             _ => panic!("Instruction either doesn't exist or hasn't been implemented yet"),
         };
         None
