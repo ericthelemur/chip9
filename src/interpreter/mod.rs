@@ -43,27 +43,25 @@ impl ChipState {
         (n3, n2, n1, n0)
     }
 
-    fn execute(&mut self, instruction: u16) {
+    fn execute(&mut self, instruction: u16) -> Option<chip8_base::Display> {
         match Self::nibbles(instruction) {
             // 0000 NOP: Nothing
             (0x0, 0x0, 0x0, 0x0) => (),
-            // 00EE RET: Return from subroutine
-            (0x0, 0x0, 0xE, 0xE) => {
-                self.program_counter = self.stack[self.stack_pointer as usize];
-                self.stack_pointer -= 1;
-            },
-            // 8xy2 AND Vx, Vy: Set Vx = Vx AND Vy.
-            (8, x, y, 2) => self.registers[x as usize] &= self.registers[y as usize],
+            // 00E0 CLS: Clears the display
+            (0x0, 0x0, 0xE, 0x0) => {
+                self.display = [[chip8_base::Pixel::default(); 64]; 32];
+                return Some(self.display);
+            }
             _ => panic!("Instruction either doesn't exist or hasn't been implemented yet"),
-        }
+        };
+        None
     }
 }
 
 impl chip8_base::Interpreter for ChipState {
     fn step(&mut self, keys: &chip8_base::Keys) -> Option<chip8_base::Display> {
         let instr = self.fetch();
-        self.execute(instr);
-        Some(self.display)
+        self.execute(instr)
     }
 
     fn speed(&self) -> Duration {
